@@ -11,6 +11,7 @@ const errorMsg = document.getElementById("errorMsg");
 const closeDialogBtn = document.getElementById("closeDialog");
 closeDialogBtn.addEventListener('click', () => errorDialog.close());
 // Utility: show detailed connection errors
+function displayConnectionError(error) {
   if (!error) return;
   console.error('Database connection error:', error);
   let message = 'ไม่สามารถเชื่อมต่อฐานข้อมูลได้';
@@ -21,15 +22,28 @@ closeDialogBtn.addEventListener('click', () => errorDialog.close());
   msgDiv.style.color = 'red';
   errorMsg.textContent = message;
   errorDialog.showModal();
+}
 // Fetch and render all student records
 async function loadStudents() {
-  const { data, error } = await supabase.from("students").select("*" ).order("id", { ascending: true });
-  if (error) {
-    displayConnectionError(error);
-    return;
+  try {
+    const { data, error } = await supabase.from("students").select("*").order("id", { ascending: true });
+    if (error) {
+      displayConnectionError(error);
+      return;
+    }
+    // หากไม่มีข้อมูลจะแสดงข้อความกรณีว่าง
+    if (!data || data.length === 0) {
+      msgDiv.textContent = 'ไม่มีข้อมูลนักเรียนในระบบ';
+      msgDiv.style.color = '#cccccc';
+      tableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">ไม่มีรายการ</td></tr>';
+      return;
+    }
+    tableBody.innerHTML = "";
+    data.forEach(renderStudentRow);
+  } catch (e) {
+    // Unexpected errors (network, etc.)
+    displayConnectionError(e);
   }
-  tableBody.innerHTML = "";
-  data.forEach(renderStudentRow);
 }
 
 // Render a single row in the table
@@ -55,13 +69,19 @@ function renderStudentRow(student) {
 // Add or update a student record
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const payload = {
-    first_name: document.getElementById("firstName").value.trim(),
-    last_name: document.getElementById("lastName").value.trim(),
-    student_number: document.getElementById("studentNumber").value.trim(),
-    score: parseFloat(document.getElementById("score").value),
-    grade: document.getElementById("grade").value.trim()
-  };
+
+  const firstName = document.getElementById("firstName").value.trim();
+  const lastName = document.getElementById("lastName").value.trim();
+  const studentNumber = document.getElementById("studentNumber").value.trim();
+  const score = parseFloat(document.getElementById("score").value);
+  const grade = document.getElementById("grade").value.trim();
+
+  if (!firstName || !lastName || !studentNumber || isNaN(score) || !grade) {
+    alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+    return;
+  }
+
+  const payload = { first_name: firstName, last_name: lastName, student_number: studentNumber, score, grade };
 
   // If the form has a hidden data-id attribute, we are updating
   const recordId = form.dataset.id;

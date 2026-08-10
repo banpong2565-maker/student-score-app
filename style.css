@@ -148,7 +148,15 @@ tbody tr:nth-child(even) {
   border-radius: 0.4rem;
   cursor: pointer;
 }
+.msg {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  text-align: center;
+}
 
+.error-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
 @media (max-width: 600px) {
   .grid {
     grid-template-columns: 1fr;
