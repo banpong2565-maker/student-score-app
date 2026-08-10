@@ -1,0 +1,109 @@
+// script.js
+// Import the Supabase client from the config file
+import { supabase } from "./supabaseConfig.js";
+
+// DOM elements
+const form = document.getElementById("student-form");
+const tableBody = document.querySelector("#students-table tbody");
+const msgDiv = document.getElementById("msg");
+
+// Fetch and render all student records
+async function loadStudents() {
+  const { data, error } = await supabase.from("students").select("*" ).order("id", { ascending: true });
+  if (error) {
+    console.error("Error loading students:", error);
+    return;
+  }
+  tableBody.innerHTML = "";
+  data.forEach(renderStudentRow);
+}
+
+// Render a single row in the table
+function renderStudentRow(student) {
+  const tr = document.createElement("tr");
+  tr.dataset.id = student.id;
+  tr.innerHTML = `
+    <td>${student.first_name}</td>
+    <td>${student.last_name}</td>
+    <td>${student.student_number}</td>
+    <td>${student.score}</td>
+    <td>${student.grade}</td>
+    <td><button class="action-btn edit-btn">แก้ไข</button></td>
+    <td><button class="action-btn delete-btn">ลบ</button></td>
+  `;
+  // Edit button handler
+  tr.querySelector('.edit-btn').addEventListener('click', () => editStudent(student));
+  // Delete button handler
+  tr.querySelector('.delete-btn').addEventListener('click', () => deleteStudent(student.id));
+  tableBody.appendChild(tr);
+}
+
+// Add or update a student record
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const payload = {
+    first_name: document.getElementById("firstName").value.trim(),
+    last_name: document.getElementById("lastName").value.trim(),
+    student_number: document.getElementById("studentNumber").value.trim(),
+    score: parseFloat(document.getElementById("score").value),
+    grade: document.getElementById("grade").value.trim()
+  };
+
+  // If the form has a hidden data-id attribute, we are updating
+  const recordId = form.dataset.id;
+  if (recordId) {
+    const { error } = await supabase.from("students").update(payload).eq("id", recordId);
+    if (error) {
+      console.error("Update failed:", error);
+      msgDiv.textContent = "เกิดข้อผิดพลาดขณะอัปเดตข้อมูล: " + error.message;
+      msgDiv.style.color = "red";
+    } else {
+      msgDiv.textContent = "อัปเดตข้อมูลสำเร็จ";
+      msgDiv.style.color = "green";
+      // Reset form state
+      delete form.dataset.id;
+      form.reset();
+      await loadStudents();
+    }
+  } else {
+    if (error) {
+      console.error("Insert failed:", error);
+      msgDiv.textContent = "เกิดข้อผิดพลาดขณะบันทึกข้อมูล: " + error.message;
+      msgDiv.style.color = "red";
+    } else {
+      msgDiv.textContent = "บันทึกข้อมูลสำเร็จ";
+      msgDiv.style.color = "green";
+      form.reset();
+      await loadStudents();
+    }
+  }
+});
+
+// Populate form for editing
+function editStudent(student) {
+  document.getElementById("firstName").value = student.first_name;
+  document.getElementById("lastName").value = student.last_name;
+  document.getElementById("studentNumber").value = student.student_number;
+  document.getElementById("score").value = student.score;
+  document.getElementById("grade").value = student.grade;
+  form.dataset.id = student.id; // mark as edit mode
+}
+
+// Delete a student record
+async function deleteStudent(id) {
+  const confirmed = confirm("คุณแน่ใจหรือว่าต้องการลบรายการนี้?");
+  if (!confirmed) return;
+  const { error } = await supabase.from("students").delete().eq("id", id);
+  if (error) {
+    console.error("Delete failed:", error);
+    msgDiv.textContent = "เกิดข้อผิดพลาดขณะลบข้อมูล: " + error.message;
+    msgDiv.style.color = "red";
+  } else {
+    msgDiv.textContent = "ลบข้อมูลสำเร็จ";
+    msgDiv.style.color = "green";
+    await loadStudents();
+  }
+}
+
+// Initial load
+loadStudents();

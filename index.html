@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ระบบจัดเก็บคะแนนนักเรียน</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1 class="title">บันทึกคะแนนนักเรียน</h1>
+    <section class="form-card">
+      <form id="student-form">
+        <div class="grid">
+          <input type="text" id="firstName" placeholder="ชื่อ" required />
+          <input type="text" id="lastName" placeholder="สกุล" required />
+          <input type="text" id="studentNumber" placeholder="เลขที่" required />
+          <input type="number" step="0.1" id="score" placeholder="คะแนน" required />
+          <input type="text" id="grade" placeholder="เกรด" required />
+        </div>
+          <button type="submit" class="btn-primary">บันทึก</button>
+          <div id="msg" class="msg"></div>
+      </form>
+    </section>
+    <section class="list-card">
+      <h2 class="subtitle">รายการนักเรียน</h2>
+      <table id="students-table">
+        <thead>
+          <tr>
+            <th>ชื่อ</th>
+            <th>สกุล</th>
+            <th>เลขที่</th>
+            <th>คะแนน</th>
+            <th>เกรด</th>
+            <th>แก้ไข</th>
+            <th>ลบ</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+  <script type="module" src="script.js"></script>
+</body>
+</html>
