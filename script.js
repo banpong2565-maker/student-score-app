@@ -6,12 +6,21 @@ import { supabase } from "./supabaseConfig.js";
 const form = document.getElementById("student-form");
 const tableBody = document.querySelector("#students-table tbody");
 const msgDiv = document.getElementById("msg");
-
+// Utility: show detailed connection errors
+function displayConnectionError(error) {
+  if (!error) return;
+  console.error('Database connection error:', error);
+  let message = 'ไม่สามารถเชื่อมต่อฐานข้อมูลได้';
+  if (error.message) message += `: ${error.message}`;
+  if (error.details) message += ` (${error.details})`;
+  msgDiv.textContent = message;
+  msgDiv.style.color = 'red';
+}
 // Fetch and render all student records
 async function loadStudents() {
   const { data, error } = await supabase.from("students").select("*" ).order("id", { ascending: true });
   if (error) {
-    console.error("Error loading students:", error);
+    displayConnectionError(error);
     return;
   }
   tableBody.innerHTML = "";
@@ -53,11 +62,9 @@ form.addEventListener("submit", async (e) => {
   const recordId = form.dataset.id;
   if (recordId) {
     const { error } = await supabase.from("students").update(payload).eq("id", recordId);
-    if (error) {
-      console.error("Update failed:", error);
-      msgDiv.textContent = "เกิดข้อผิดพลาดขณะอัปเดตข้อมูล: " + error.message;
-      msgDiv.style.color = "red";
-    } else {
+      if (error) {
+        displayConnectionError(error);
+      } else {
       msgDiv.textContent = "อัปเดตข้อมูลสำเร็จ";
       msgDiv.style.color = "green";
       // Reset form state
@@ -66,17 +73,16 @@ form.addEventListener("submit", async (e) => {
       await loadStudents();
     }
   } else {
-    if (error) {
-      console.error("Insert failed:", error);
-      msgDiv.textContent = "เกิดข้อผิดพลาดขณะบันทึกข้อมูล: " + error.message;
-      msgDiv.style.color = "red";
-    } else {
-      msgDiv.textContent = "บันทึกข้อมูลสำเร็จ";
-      msgDiv.style.color = "green";
-      form.reset();
-      await loadStudents();
+      const { error } = await supabase.from("students").insert([payload]);
+      if (error) {
+        displayConnectionError(error);
+      } else {
+        msgDiv.textContent = "บันทึกข้อมูลสำเร็จ";
+        msgDiv.style.color = "green";
+        form.reset();
+        await loadStudents();
+      }
     }
-  }
 });
 
 // Populate form for editing
