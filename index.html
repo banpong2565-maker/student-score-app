@@ -3,30 +3,74 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Student Score App - Simple</title>
+  <title>Student Score App - Supabase Test</title>
+
   <style>
-    body { font-family: Arial, sans-serif; padding: 2rem; background:#f5f5f5; }
-    #output { white-space: pre-wrap; background:#fff; padding:1rem; border:1px solid #ccc; }
-    button { padding:0.5rem 1rem; margin-top:1rem; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background: #f5f5f5;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+    }
+
+    input {
+      padding: 10px;
+      margin: 5px;
+      width: 180px;
+    }
+
+    button {
+      padding: 10px 18px;
+      margin: 5px;
+      cursor: pointer;
+    }
+
+    #output {
+      white-space: pre-wrap;
+      background: #f8f8f8;
+      padding: 1rem;
+      border: 1px solid #ccc;
+      margin-top: 20px;
+    }
   </style>
 </head>
+
 <body>
+
+<div class="container">
+
   <h1>Student Scores</h1>
-  <button id="refreshBtn">Load Students</button>
-  <pre id="output">Loading...</pre>
-  <script type="module" src="script.js"></script>
-  <script>
-    document.getElementById('refreshBtn').addEventListener('click', () => {
-      const out = document.getElementById('output');
-      out.textContent = 'Loading...';
-      if (window.loadStudents) window.loadStudents();
-    });
-    // Initial load on page load
-    window.addEventListener('load', () => {
-      const out = document.getElementById('output');
-      out.textContent = 'Loading...';
-      if (window.loadStudents) window.loadStudents();
-    });
-  </script>
+
+  <h3>เพิ่มข้อมูลนักเรียน</h3>
+
+  <input id="firstName" placeholder="ชื่อ">
+  <input id="lastName" placeholder="นามสกุล">
+  <input id="studentNumber" placeholder="เลขนักเรียน">
+  <input id="score" type="number" placeholder="คะแนน">
+  <input id="grade" placeholder="เกรด">
+
+  <br>
+
+  <button id="saveBtn">
+    บันทึกข้อมูล
+  </button>
+
+  <button id="refreshBtn">
+    Load Students
+  </button>
+
+  <pre id="output">พร้อมทดสอบ...</pre>
+
+</div>
+
+<script type="module" src="script.js"></script>
+
 </body>
 </html>
