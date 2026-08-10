@@ -6,16 +6,21 @@ import { supabase } from "./supabaseConfig.js";
 const form = document.getElementById("student-form");
 const tableBody = document.querySelector("#students-table tbody");
 const msgDiv = document.getElementById("msg");
+const errorDialog = document.getElementById("errorDialog");
+const errorMsg = document.getElementById("errorMsg");
+const closeDialogBtn = document.getElementById("closeDialog");
+closeDialogBtn.addEventListener('click', () => errorDialog.close());
 // Utility: show detailed connection errors
-function displayConnectionError(error) {
   if (!error) return;
   console.error('Database connection error:', error);
   let message = 'ไม่สามารถเชื่อมต่อฐานข้อมูลได้';
   if (error.message) message += `: ${error.message}`;
   if (error.details) message += ` (${error.details})`;
+  // Update UI
   msgDiv.textContent = message;
   msgDiv.style.color = 'red';
-}
+  errorMsg.textContent = message;
+  errorDialog.showModal();
 // Fetch and render all student records
 async function loadStudents() {
   const { data, error } = await supabase.from("students").select("*" ).order("id", { ascending: true });

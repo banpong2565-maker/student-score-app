@@ -28,6 +28,8 @@ body {
   justify-content: center;
 }
 
+
+
 .container {
   width: 90%;
   max-width: 900px;
@@ -37,6 +39,8 @@ body {
   padding: 2rem;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
+
+
 
 .title {
   text-align: center;
@@ -126,6 +130,23 @@ tbody tr:nth-child(even) {
 
 .action-btn:hover {
   color: var(--primary-hover);
+}
+.error-dialog {
+  background: var(--card-bg);
+  color: var(--text-color);
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  backdrop-filter: blur(var(--card-blur));
+}
+.error-dialog button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: 0.4rem;
+  cursor: pointer;
 }
 
 @media (max-width: 600px) {
